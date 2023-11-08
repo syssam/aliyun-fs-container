@@ -1,0 +1,39 @@
+edition: 1.0.0
+name: aliyun-fs-container
+access: default
+services:
+  framework:
+    component: fc
+    actions:
+      pre-deploy:
+        - component: fc build --use-docker --dockerfile ./Dockerfile
+    props:
+      region: cn-hongkong
+      service:
+        name: aliyun-fs-container
+      function:
+        codeUri: ./
+        name: aliyun-fs-container
+        description: Initialize
+        runtime: custom-container
+        memorySize: 256
+        timeout: 60
+        caPort: 8080
+        customContainerConfig:
+          image: "{{ acrRegistry }}"
+      triggers:
+        - name: httpTrigger
+          type: http
+          config:
+            authType: anonymous
+            methods:
+              - GET
+              - POST
+      customDomains:
+        - domainName: auto
+          protocol: HTTP
+          routeConfigs:
+            - path: /*
+              methods:
+                - GET
+                - POST
