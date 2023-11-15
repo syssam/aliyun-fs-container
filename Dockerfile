@@ -1,18 +1,16 @@
 FROM golang:buster as builder
 
-RUN apk update && apk add alpine-sdk git && rm -rf /var/cache/apk/*
-
 # Create app directory
 WORKDIR /app
 
 # Copy app dependencies
-COPY go.mod .
-COPY go.sum .
+COPY go.* ./
 RUN go mod download
 
 # Build executable binary
-COPY server.go .
-RUN go build -o ./server ./server.go
+COPY . ./
+
+RUN go build -v -o server
 
 FROM debian:buster-slim
 RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates
