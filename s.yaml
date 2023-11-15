@@ -10,7 +10,7 @@ services:
       service:
         name: aliyun-fs-container
       function:
-        name: go-gin
+        name: aliyun-fs-container
         runtime: custom-container
         timeout: 60
         memorySize: 1024
