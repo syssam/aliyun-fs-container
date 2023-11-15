@@ -1,4 +1,4 @@
-FROM golang:alpine3.13 AS builder
+FROM golang:buster as builder
 
 RUN apk update && apk add alpine-sdk git && rm -rf /var/cache/apk/*
 
