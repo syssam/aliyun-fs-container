@@ -3,7 +3,7 @@ FROM golang:buster as builder
 RUN apk update && apk add alpine-sdk git && rm -rf /var/cache/apk/*
 
 # Create app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy app dependencies
 COPY go.mod .
@@ -14,16 +14,14 @@ RUN go mod download
 COPY server.go .
 RUN go build -o ./server ./server.go
 
-FROM alpine:latest
-
-# Get CA certs for networking
-RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+FROM debian:buster-slim
+RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates
+RUN rm -rf /var/lib/apt/lists/*
 
 # Create app directory
-WORKDIR /usr/src/app
 
 # Copy static executable
-COPY --from=builder /usr/src/app/server .
+COPY --from=builder /app/server /app/server
 
 # Run the server binary
 EXPOSE 9000
