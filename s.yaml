@@ -1,24 +1,20 @@
 edition: 1.0.0
+
 name: aliyun-fs-container
 access: default
 services:
-  framework:
+  GoGinCustomContainer:
     component: fc
-    actions:
-      pre-deploy:
-        - component: fc build --use-docker --dockerfile ./Dockerfile
     props:
       region: cn-hongkong
       service:
         name: aliyun-fs-container
       function:
-        codeUri: ./
-        name: aliyun-fs-container
-        description: Initialize
+        name: go-gin
         runtime: custom-container
-        memorySize: 256
         timeout: 60
-        caPort: 8080
+        memorySize: 1024
+        caPort: 9000
         customContainerConfig:
           image: registry-intl.cn-hongkong.aliyuncs.com/istores-app/aliyun-fs-container:v0.1
       triggers:
@@ -29,11 +25,3 @@ services:
             methods:
               - GET
               - POST
-      customDomains:
-        - domainName: auto
-          protocol: HTTP
-          routeConfigs:
-            - path: /*
-              methods:
-                - GET
-                - POST

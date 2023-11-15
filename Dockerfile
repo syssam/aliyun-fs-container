@@ -1,32 +1,30 @@
-# Use the official golang image to create a binary.
-# This is based on Debian and sets the GOPATH to /go.
-# https://hub.docker.com/_/golang
-FROM golang:buster as builder
+FROM golang:alpine3.13 AS builder
 
-# Create and change to the app directory.
-WORKDIR /app
+RUN apk update && apk add alpine-sdk git && rm -rf /var/cache/apk/*
 
-# Retrieve application dependencies.
-# This allows the container build to reuse cached dependencies.
-# Expecting to copy go.mod and if present go.sum.
-COPY go.* ./
+# Create app directory
+WORKDIR /usr/src/app
+
+# Copy app dependencies
+COPY go.mod .
+COPY go.sum .
 RUN go mod download
 
-# Copy local code to the container image.
-COPY . ./
+# Build executable binary
+COPY server.go .
+RUN go build -o ./server ./server.go
 
-# Build the binary.
-RUN go build -v -o server ./cmd/aliyun-fs-container/main.go
+FROM alpine:latest
 
-# Use the official Debian slim image for a lean production container.
-# https://hub.docker.com/_/debian
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM debian:buster-slim
-RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates
-RUN rm -rf /var/lib/apt/lists/*
+# Get CA certs for networking
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 
-# Copy the binary to the production image from the builder stage.
-COPY --from=builder /app/server /app/server
+# Create app directory
+WORKDIR /usr/src/app
 
-# Run the web service on container startup.
-CMD ["/app/server"]
+# Copy static executable
+COPY --from=builder /usr/src/app/server .
+
+# Run the server binary
+EXPOSE 9000
+ENTRYPOINT ["./server"]
