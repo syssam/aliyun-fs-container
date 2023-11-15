@@ -22,4 +22,4 @@ RUN rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/server /app/server
 
 # Run the server binary
-CMD ["/app/server"]
+ENTRYPOINT ["/app/server"]
