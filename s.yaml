@@ -1,9 +1,8 @@
 edition: 1.0.0
-
 name: aliyun-fs-container
 access: default
 services:
-  GoGinCustomContainer:
+  framework:
     component: fc
     props:
       region: cn-hongkong
