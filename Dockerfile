@@ -22,5 +22,4 @@ RUN rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/server /app/server
 
 # Run the server binary
-EXPOSE 9000
-ENTRYPOINT ["./server"]
+CMD ["/app/server"]
