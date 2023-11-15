@@ -20,7 +20,7 @@ services:
         timeout: 60
         caPort: 8080
         customContainerConfig:
-          image: "{{ acrRegistry }}"
+          image: registry-intl.cn-hongkong.aliyuncs.com/istores-app/aliyun-fs-container:v0.1
       triggers:
         - name: httpTrigger
           type: http
